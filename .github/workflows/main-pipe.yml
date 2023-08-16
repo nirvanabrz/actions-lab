@@ -12,13 +12,30 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
+   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
+
+    permissions:
+      actions: read
+      checks: read
+      contents: read
+      deployments: read
+      id-token: none
+      issues: read
+      discussions: read
+      packages: read
+      pages: read
+      pull-requests: read
+      repository-projects: read
+      security-events: read
+      statuses: read
+
     runs-on: ubuntu-latest
+    # The type of runner that the job will run on
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -28,9 +45,12 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+    
+
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+          echo "::debug::Set the Octocat variable"
