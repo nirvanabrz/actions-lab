@@ -16,9 +16,39 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
+  secret-generator:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: some/secret-store@v1
+      with:
+        credentials: ${{ secrets.SECRET_STORE_CREDENTIALS }}
+        instance: ${{ secrets.SECRET_STORE_INSTANCE }}
+    - name: generate secret
+      shell: bash
+      run: |
+        GENERATED_SECRET=$((RANDOM))
+        echo "::add-mask::$GENERATED_SECRET"
+        SECRET_HANDLE=$(secret-store store-secret "$GENERATED_SECRET")
+        echo "handle=$secret_handle" >> "$GITHUB_OUTPUT"
+  secret-consumer:
+    runs-on: ubuntu-latest
+    needs: secret-generator
+    steps:
+    - uses: some/secret-store@v1
+      with:
+        credentials: ${{ secrets.SECRET_STORE_CREDENTIALS }}
+        instance: ${{ secrets.SECRET_STORE_INSTANCE }}
+    - name: use secret
+      shell: bash
+      run: |
+        SECRET_HANDLE="${{ needs.secret-generator.outputs.handle }}"
+        RETRIEVED_SECRET=$(secret-store retrieve-secret "$SECRET_HANDLE")
+        echo "::add-mask::$RETRIEVED_SECRET"
+        echo "We retrieved our masked secret: $RETRIEVED_SECRET" 
+
+
   # This workflow contains a single job called "build"
   build:
-
     permissions:
       actions: read
       checks: read
@@ -53,4 +83,3 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-          echo "::debug::Set the Octocat variable"
