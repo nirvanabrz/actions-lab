@@ -28,7 +28,7 @@ jobs:
         run: echo "teste"
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@V2.2.0
         with:
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           ## the following creates an ARN based on the values entered into github secrets
@@ -37,6 +37,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest    
+    needs: auth
     permissions:
       actions: read
       checks: read
