@@ -15,8 +15,8 @@ on:
    
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
   auth:
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       checks: read
@@ -34,10 +34,11 @@ jobs:
 
     steps:
       - name: Get Secrets
-      run: echo "teste"
+        run: echo "teste"
 
   # This workflow contains a single job called "build"
   build:
+    runs-on: ubuntu-latest    
     permissions:
       actions: read
       checks: read
@@ -53,7 +54,6 @@ jobs:
       security-events: read
       statuses: read
 
-    runs-on: ubuntu-latest
     # The type of runner that the job will run on
 
     # Steps represent a sequence of tasks that will be executed as part of the job
