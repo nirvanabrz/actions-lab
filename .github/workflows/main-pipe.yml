@@ -1,42 +1,40 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
    
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+env:
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_DEFAULT_OUTPUT: json
+
 jobs:
   auth:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
-      checks: read
       contents: read
-      deployments: read
-      id-token: none
-      issues: read
-      discussions: read
-      packages: read
-      pages: read
-      pull-requests: read
-      repository-projects: read
-      security-events: read
-      statuses: read
+      id-token: write
 
     steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
       - name: Get Secrets
         run: echo "teste"
 
-  # This workflow contains a single job called "build"
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+          ## the following creates an ARN based on the values entered into github secrets
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_DEPLOY_ROLE }}
+          role-session-name: myGitHubActions
+
   build:
     runs-on: ubuntu-latest    
     permissions:
@@ -54,14 +52,8 @@ jobs:
       security-events: read
       statuses: read
 
-    # The type of runner that the job will run on
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         env:
           SECRET_STORE_CREDENTIALS: ${{ secrets.SECRET_STORE_CREDENTIALS }}
