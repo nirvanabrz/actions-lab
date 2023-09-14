@@ -24,8 +24,8 @@ jobs:
 
       - name: Docker
         uses: nirvanabrz/docker-acation@main
-        with: 
-          docker-run-options: "-d"
+        # with: 
+        #   docker-run-options: "-d"
 
   #     - name: Get Secrets
   #       run: echo "teste"
